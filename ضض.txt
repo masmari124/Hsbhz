@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+  <meta charset="UTF-8">
+  <title>اختبار الأسئلة</title>
+  <style>
+    body {
+      font-family: Arial;
+      text-align: center;
+      background-color: #f0f0f0;
+      padding: 40px;
+    }
+
+    .quiz-container {
+      background-color: #fff;
+      padding: 30px;
+      border-radius: 10px;
+      width: 80%;
+      max-width: 500px;
+      margin: auto;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+
+    .question {
+      font-size: 22px;
+      margin-bottom: 20px;
+    }
+
+    .choices {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .choices button {
+      padding: 10px;
+      font-size: 18px;
+      cursor: pointer;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+      transition: background 0.2s;
+    }
+
+    .choices button:hover {
+      background-color: #e0e0e0;
+    }
+
+    .timer {
+      color: red;
+      font-size: 18px;
+      margin-bottom: 10px;
+    }
+
+    .result {
+      margin-top: 20px;
+      font-size: 20px;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="quiz-container">
+    <div class="timer" id="timer">الوقت: 10 ثواني</div>
+    <div class="question" id="question">جارٍ تحميل السؤال...</div>
+    <div class="choices" id="choices"></div>
+    <div class="result" id="result"></div>
+  </div>
+
+  <script>
+    const questions = [
+      {
+        question: "ما هي عاصمة السعودية؟",
+        choices: ["الأردن", "عمان", "الرياض", "جازان"],
+        answer: "الرياض"
+      },
+      {
+        question: "ما هو أطول نهر في العالم؟",
+        choices: ["الأمازون", "الفرات", "النيل", "الدانوب"],
+        answer: "النيل"
+      },
+      {
+        question: "كم عدد الكواكب في المجموعة الشمسية؟",
+        choices: ["7", "8", "9", "6"],
+        answer: "8"
+      },
+      {
+        question: "من هو مؤسس شركة مايكروسوفت؟",
+        choices: ["إيلون ماسك", "بيل غيتس", "ستيف جوبز", "مارك زوكربيرغ"],
+        answer: "بيل غيتس"
+      },
+      {
+        question: "ما هي عاصمة مصر؟",
+        choices: ["الخرطوم", "القاهرة", "الرباط", "دمشق"],
+        answer: "القاهرة"
+      }
+    ];
+
+    let currentQuestion = 0;
+    let score = 0;
+    let timeLeft = 10;
+    let timerInterval;
+
+    const questionElement = document.getElementById("question");
+    const choicesElement = document.getElementById("choices");
+    const timerElement = document.getElementById("timer");
+    const resultElement = document.getElementById("result");
+
+    function showQuestion() {
+      clearInterval(timerInterval);
+      timeLeft = 10;
+      timerElement.textContent = "الوقت: 10 ثواني";
+
+      const q = questions[currentQuestion];
+      questionElement.textContent = q.question;
+      choicesElement.innerHTML = "";
+
+      q.choices.forEach(choice => {
+        const btn = document.createElement("button");
+        btn.textContent = choice;
+        btn.onclick = () => selectAnswer(choice);
+        choicesElement.appendChild(btn);
+      });
+
+      timerInterval = setInterval(() => {
+        timeLeft--;
+        timerElement.textContent = "الوقت: " + timeLeft + " ثواني";
+        if (timeLeft <= 0) {
+          clearInterval(timerInterval);
+          selectAnswer(null); // يعتبر لم يجاوب
+        }
+      }, 1000);
+    }
+
+    function selectAnswer(selected) {
+      clearInterval(timerInterval);
+
+      const correct = questions[currentQuestion].answer;
+      if (selected === correct) {
+        score++;
+      }
+
+      currentQuestion++;
+      if (currentQuestion < questions.length) {
+        showQuestion();
+      } else {
+        showResult();
+      }
+    }
+
+    function showResult() {
+      questionElement.textContent = "انتهى الاختبار!";
+      choicesElement.innerHTML = "";
+      timerElement.textContent = "";
+      resultElement.textContent = `درجتك: ${score} من ${questions.length}`;
+    }
+
+    // ابدأ أول سؤال
+    showQuestion();
+  </script>
+
+</body>
+</html>
